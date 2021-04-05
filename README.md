@@ -74,3 +74,6 @@ debes agregar tambien la ruta de este php a la lista de redireccion o no funcion
 
 
 
+
+## este codigo a sido tomado la base de varias fuentes creditos sean dados
+# ToDo
