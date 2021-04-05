@@ -22,7 +22,8 @@ $Discord['C_SE'] = '???????'; //OAUTH2 CLIENT SECRET
 
 ```
 $Discord tendra este valor antes de llamar al login.php
-```Array
+```php
+Array
 (
     [C_ID] => ?????????????????
     [C_SE] => ?????????
@@ -30,14 +31,13 @@ $Discord tendra este valor antes de llamar al login.php
 )
 ```
 se llama al [login.php](login.php)
-```
+```php
 require "login.php";
-
 ```
 luego se debe llamar al php principal con el parametro '?action=login' para iniciar el proceso de inicio de sesion
 cuando este se complete se guardaran los datos como un COOKIE encriptado 
 y $Discord devolvera los siguientes parametros
-```
+```php
 Array
 (
     [C_ID] => ?????????????
