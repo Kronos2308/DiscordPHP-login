@@ -5,6 +5,9 @@ ini_set('display_errors', 1);
 if ($_SERVER['REQUEST_SCHEME'] == 'http') 
 	exit(header('Location: https://' . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]));
 
+	$Discord['C_ID'] = '??????'; //OAUTH2 CLIENT ID
+	$Discord['C_SE'] = '???????'; //OAUTH2 CLIENT SECRET
+
 /*
 //application login setup
 $Discord = array();
@@ -27,6 +30,7 @@ define('C_USER', substr(sha1(OAUTH2_CLIENT_ID),0,10));//name of the encrypted co
 define('access_token', C_USER."_A");
 define('refresh_token', C_USER."_R");
 define('expire_token', C_USER."_E");
+define('URI', 'REURI');
 
 $reload = '<!DOCTYPE html><meta http-equiv="refresh" content="0; " />Loading...';
 $authorizeURL = 'https://discordapp.com/api/oauth2/authorize';
@@ -38,7 +42,7 @@ $guildURL = 'https://discordapp.com/api/users/@me/guilds';
 if(get('action') == 'login') {
   $params = array(
     'client_id' => OAUTH2_CLIENT_ID,
-    'redirect_uri' => $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['SERVER_NAME'].$_SERVER['PHP_SELF'],
+    'redirect_uri' => realfile(),
     'response_type' => 'code',
     'scope' => 'identify guilds guilds.join'
   );
@@ -54,6 +58,7 @@ if(get('action') == 'logout') {
 	delcookie(refresh_token);
 	delcookie(C_USER);
 	delcookie(expire_token);
+	delcookie(URI);
 	GoLoc();
 }
 
@@ -64,13 +69,18 @@ if(get('code')) {
     "grant_type" => "authorization_code",
     'client_id' => OAUTH2_CLIENT_ID,
     'client_secret' => OAUTH2_CLIENT_SECRET,
-    'redirect_uri' => 'https://'.$_SERVER['SERVER_NAME'].$_SERVER['PHP_SELF'],
+    'redirect_uri' => realfile(),
     'code' => get('code')
   ));
 
+	addcookie(URI, virtualfile(),time()+350);
 	setcookie(expire_token, Cyper::encrypt(time()+$token['expires_in'],P_KEY), time()+$token['expires_in'],"/");
 	setcookie(access_token, $token['access_token'], time()+$token['expires_in'],"/");
 	setcookie(refresh_token, $token['refresh_token'], time()+$token['expires_in']+$token['expires_in'],"/");
+	if(cookie(URI)){
+		//die();
+		redirect(cookie(URI));
+	}
 GoLoc();
 }
 
@@ -80,7 +90,7 @@ if(get('action') == 'refresh' && !cookie(access_token)) {
     "grant_type" => "refresh_token",
     'client_id' => OAUTH2_CLIENT_ID,
     'client_secret' => OAUTH2_CLIENT_SECRET,
-    'redirect_uri' => 'https://'.$_SERVER['SERVER_NAME'].$_SERVER['PHP_SELF'],
+    'redirect_uri' => realfile(),
 	'refresh_token' => cookie(refresh_token)
 	));
 	
@@ -256,7 +266,31 @@ function cookie($key, $default=NULL) {
   return array_key_exists($key, $_COOKIE) ? $_COOKIE[$key] : $default;
 }
 function GoLoc($extra = ''){
-	die(header('Location: '.$_SERVER['PHP_SELF'].$extra));
+	if (strlen($extra)>0){
+		die(header('Location: '.$_SERVER['PHP_SELF'].$extra));
+	} else {
+		$uri = $_SERVER["REQUEST_URI"];
+		$uri = str_replace("action","done",$uri);
+		die(header('Location: '.$uri));
+	}
+}
+function redirect($extra){
+	die(header('Location: '.$extra));
+}
+
+function realfile(){
+	$url = __FILE__;
+	$url = str_replace("\\","/",$url);
+	$root = $_SERVER['DOCUMENT_ROOT'];
+	$url = str_replace($root,"",$url);
+	return 'https://' . $_SERVER["HTTP_HOST"] .$url;
+}
+
+function virtualfile(){
+	$uri = $_SERVER["REQUEST_URI"];
+	$uri = str_replace("?action=login","",$uri);
+	$uri = str_replace("action","done",$uri);
+	return 'https://' . $_SERVER["HTTP_HOST"] . $uri;
 }
 
 class Cyper {

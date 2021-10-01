@@ -1,7 +1,5 @@
 <?php
 $Discord = array();
-$Discord['C_ID'] = '??????'; //OAUTH2 CLIENT ID
-$Discord['C_SE'] = '???????'; //OAUTH2 CLIENT SECRET
 $Discord['server_id'] = '?????????'; //Server ID. if state is 1, this set the state to 2 if is join, or 3 if not to the server
 //$Discord['header'] = "NO";//Remove the Default HTML <header>
 

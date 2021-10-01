@@ -7,21 +7,28 @@ en una web con solo tener un usuario de discord
 
 ### Consepto
 En general el php se debe preconfigurar con la Array $Discord
-llamar luego a login.php y $Discord almacenara los parametros otrorgados por [login.php](login.php)
+llamar a login.php y $Discord almacenara los parametros otrorgados por [login.php](login.php)
 que pueden ser usado luego para verificar el inicio de sesion y otras cosas
 
 ### Uso detallado
+establece 
+$Discord['C_ID'] = '??????'; //OAUTH2 CLIENT ID
+$Discord['C_SE'] = '???????'; //OAUTH2 CLIENT SECRET
+en login.php
 esto pasa los parametros al [login.php](login.php)
 ```php
 //application login setup
 $Discord = array();
-$Discord['C_ID'] = '??????'; //OAUTH2 CLIENT ID
-$Discord['C_SE'] = '???????'; //OAUTH2 CLIENT SECRET
 //$Discord['server_id'] = '?????????'; //Server ID. if state is 1, this set to 2 if is join, or 3 if not to the server
 //$Discord['header'] = "NO";//Remove the Default HTML <header>
 
 ```
-$Discord tendra este valor antes de llamar al login.php
+se llama al [login.php](login.php)
+```php
+require "login.php";
+```
+
+$Discord tendra este valor luego de llamar al login.php
 ```php
 Array
 (
@@ -30,10 +37,7 @@ Array
     [header] => NO
 )
 ```
-se llama al [login.php](login.php)
-```php
-require "login.php";
-```
+
 luego se debe llamar al php principal con el parametro '?action=login' para iniciar el proceso de inicio de sesion
 cuando este se complete se guardaran los datos como un COOKIE encriptado 
 y $Discord devolvera los siguientes parametros
