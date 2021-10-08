@@ -74,7 +74,7 @@ debes crear una applicacion
 ![imagen](https://user-images.githubusercontent.com/36446521/113637600-e9518400-966c-11eb-8062-43675b4b046d.png)
 
 Usa esos valores paa rellenar los ????? de antes
-debes agregar tambien la ruta de este php a la lista de redireccion o no funcionara es sensible a http y https
+debes agregar tambien la ruta de login.php a la lista de redireccion o no funcionara es sensible a http y https
 
 
 
