@@ -1,7 +1,7 @@
 <?php
 //application login setup
-$Discord['C_ID'] = ???????????;//OAUTH2 CLIENT ID
-$Discord['C_SE'] = '¿¿¿¿¿¿¿¿¿';//OAUTH2 CLIENT SECRET
+$Discord['C_ID'] = 000000000000000000 //OAUTH2 CLIENT ID
+$Discord['C_SE'] = '¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿';//OAUTH2 CLIENT SECRET
 
 /*
 $Discord = array();
