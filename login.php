@@ -16,14 +16,14 @@ ini_set('max_execution_time', 300); //300 seconds = 5 minutes. In case if your C
 
 
 /*
-	DISCORD AUTH 
+    DISCORD AUTH 
 */
 //Error handle
 error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING);
 ini_set('display_errors', 1);
 //HTTPS ONLY
 if ($_SERVER['REQUEST_SCHEME'] == 'http') exit(header('Location: ' .mainfile()));
-	
+    
 //define some keys
 define('OAUTH2_CLIENT_ID', $Discord['C_ID']);
 define('OAUTH2_CLIENT_SECRET', $Discord['C_SE']);
@@ -52,15 +52,15 @@ if(get('action') == 'login') {
 //      'scope' => 'identify guilds guilds.join'
     'scope' => 'identify email'
   );
-	if (isset($Discord['server_id'])){
+    if (isset($Discord['server_id'])){
         if (strlen($Discord['server_id'])>0){
             $params['scope'].=' guilds';
         }
     }
   
-	//Redirect Cookie
+    //Redirect Cookie
     $lock = Cyper::encrypt(mainfile());
-	addcookie(URI, $lock ,3650);
+    addcookie(URI, $lock ,3650);
   // Redirect the user to Discord's authorization page
   die(header('Location: https://discordapp.com/api/oauth2/authorize' . '?' . http_build_query($params)));
 }
@@ -68,30 +68,30 @@ if(get('action') == 'login') {
 // Logout from discord
 if(get('action') == 'logout') {
   // This must to logout you
-	delcookie(access_token);
-	delcookie(refresh_token);
-	delcookie(C_USER);
-	//delcookie(expire_token);
-	delcookie(URI);
-	GoLoc();
+    delcookie(access_token);
+    delcookie(refresh_token);
+    delcookie(C_USER);
+    //delcookie(expire_token);
+    delcookie(URI);
+    GoLoc();
 }
 
 //Get error code
 if(get('error')) {
-	if(ismain()){
-		$bodyH ='<h2>'.get('error').'</h2><p>'.get('error_description').'<p>';
-		if(cookie(URI)){
-			$urk = Cyper::decrypt(cookie(URI));
+    if(ismain()){
+        $bodyH ='<h2>'.get('error').'</h2><p>'.get('error_description').'<p>';
+        if(cookie(URI)){
+            $urk = Cyper::decrypt(cookie(URI));
             if (substr($urk,-9,9) == 'login.php'){
                 $bodyH .= 'Redirect Error';
                 delcookie(URI);
             } else {
                 $bodyH .=  delayurl($urk.'?'.$_SERVER["QUERY_STRING"],5);
             }
-		} else {
-			$bodyH .= delayurl("/",15).'Redirect Error';
-		}
-	}
+        } else {
+            $bodyH .= delayurl("/",15).'Redirect Error';
+        }
+    }
 }
 
 // Get access_token and refresh_token with code
@@ -109,14 +109,14 @@ if(get('code')) {
         //do any
         GoLoc('?error='.$token['error'].'&error_description='.$token['error_description']);
     }
-	//addcookie(expire_token, Cyper::encrypt($token['expires_in']), $token['expires_in']);
-	addcookie(access_token, Cyper::encrypt($token['access_token']), expire_time);
-	addcookie(refresh_token, Cyper::encrypt($token['refresh_token']), expire_time*2);
-	if(cookie(URI)){
-		$urk = Cyper::decrypt(cookie(URI));
-		//delcookie(URI);
-		redirect($urk);
-	}
+    //addcookie(expire_token, Cyper::encrypt($token['expires_in']), $token['expires_in']);
+    addcookie(access_token, Cyper::encrypt($token['access_token']), expire_time);
+    addcookie(refresh_token, Cyper::encrypt($token['refresh_token']), expire_time*2);
+    if(cookie(URI)){
+        $urk = Cyper::decrypt(cookie(URI));
+        //delcookie(URI);
+        redirect($urk);
+    }
 echo '<pre>';print_r($token);
 die('Redirect Error');
 }
@@ -128,107 +128,107 @@ if(get('action') == 'refresh' && !cookie(access_token)) {
     'client_id' => OAUTH2_CLIENT_ID,
     'client_secret' => OAUTH2_CLIENT_SECRET,
     'redirect_uri' => realfile(),
-	'refresh_token' => Cyper::decrypt(cookie(refresh_token))
-	));
-	
-	//addcookie(expire_token, Cyper::encrypt($token['expires_in']), $token['expires_in']);
-	addcookie(access_token, Cyper::encrypt($token['access_token']), expire_time);
-	addcookie(refresh_token, Cyper::encrypt($token['refresh_token']), expire_time*2);
+    'refresh_token' => Cyper::decrypt(cookie(refresh_token))
+    ));
+    
+    //addcookie(expire_token, Cyper::encrypt($token['expires_in']), $token['expires_in']);
+    addcookie(access_token, Cyper::encrypt($token['access_token']), expire_time);
+    addcookie(refresh_token, Cyper::encrypt($token['refresh_token']), expire_time*2);
     if (!isset($token['access_token'])) {GoLoc('?action=login');}
 GoLoc();
 }
 
 //login check
 if(cookie(access_token)||cookie(C_USER)) {
-	$Discord['state'] = 1;
-	//echo '<pre>';print_r(session_get_cookie_params ($_COOKIE[ C_USER ]) );die();
-	if (cookie(C_USER)){
-		//get encripted cookie
-		$Discord['user'] = json_decode(Cyper::decrypt(cookie(C_USER)),true);
-		//check expire time
-		if (time() > $Discord['user']['expire']){
-			
-			if(!cookie(access_token))
-			addcookie(access_token, $Discord['user']['access_token'], expire_time);
-			
-			if(!cookie(refresh_token))
-			addcookie(refresh_token, $Discord['user']['refresh_token'], expire_time);
-			delcookie(C_USER);
-			die($reload);
-		}
-	}else{
-		//get ifo from api an encrypt cookie
+    $Discord['state'] = 1;
+    //echo '<pre>';print_r(session_get_cookie_params ($_COOKIE[ C_USER ]) );die();
+    if (cookie(C_USER)){
+        //get encripted cookie
+        $Discord['user'] = json_decode(Cyper::decrypt(cookie(C_USER)),true);
+        //check expire time
+        if (time() > $Discord['user']['expire']){
+            
+            if(!cookie(access_token))
+            addcookie(access_token, $Discord['user']['access_token'], expire_time);
+            
+            if(!cookie(refresh_token))
+            addcookie(refresh_token, $Discord['user']['refresh_token'], expire_time);
+            delcookie(C_USER);
+            die($reload);
+        }
+    }else{
+        //get ifo from api an encrypt cookie
         //echo Cyper::decrypt(cookie(expire_token)).'<br>';
-		$Discord['user'] = apiRequest($userURL);
-		$Discord['user']['expire'] = time()+expire_time;
-		$Discord['user']['access_token'] = cookie(access_token);
-		$Discord['user']['refresh_token'] = cookie(refresh_token);
+        $Discord['user'] = apiRequest($userURL);
+        $Discord['user']['expire'] = time()+expire_time;
+        $Discord['user']['access_token'] = cookie(access_token);
+        $Discord['user']['refresh_token'] = cookie(refresh_token);
         FormatAvatar($Discord);
-		addcookie(C_USER, Cyper::encrypt(json_encode($Discord['user'])), expire_time);
-		//delcookie(expire_token);
-	}
+        addcookie(C_USER, Cyper::encrypt(json_encode($Discord['user'])), expire_time);
+        //delcookie(expire_token);
+    }
 
-	//If tokens fail try re login
-	if (isset($Discord['user']['message'])){
-		delcookie(C_USER);
-		if($Discord['user']['message'] == '401: Unauthorized'){
-			delcookie(access_token);
-			GoLoc('?action=refresh');
-		}
-	}
+    //If tokens fail try re login
+    if (isset($Discord['user']['message'])){
+        delcookie(C_USER);
+        if($Discord['user']['message'] == '401: Unauthorized'){
+            delcookie(access_token);
+            GoLoc('?action=refresh');
+        }
+    }
 
-	if(isset($Discord['user']['message'])){
-		delcookie(C_USER);
-	}
+    if(isset($Discord['user']['message'])){
+        delcookie(C_USER);
+    }
  
     if (strlen($Discord['user']['avatar']) != 0){
-		$avatar = $Discord['user']['avatar'];
-	} else
+        $avatar = $Discord['user']['avatar'];
+    } else
         $avatar = 'https://cdn.discordapp.com/embed/avatars/0.png';
         
-		
-	
-	$headerH =  '<header class=header-login><span id=SideH></span><br><img class=rounded-circle src="'.$avatar.'" />
-	<h4 class=text-login>' . $Discord['user']['username']. '</h4>
-	<button class=butt-logout onclick="window.location.href=\'?action=logout\'">Logout</button></header>';
-	
-	if (!isset($Discord['user']['isJoin'])){
-		//check if is join
-		if (isset($Discord['server_id'])){
-			if (strlen($Discord['server_id'])>0){
-				$Discord['guild'] = apiRequest($guildURL);
-				if(isset($guild['retry_after'])||isset($Discord['user']['retry_after'])){
-					die($reload);
-				}
+        
+    
+    $headerH =  '<header class=header-login><span id=SideH></span><br><img class=rounded-circle src="'.$avatar.'" />
+    <h4 class=text-login>' . $Discord['user']['username']. '</h4>
+    <button class=butt-logout onclick="window.location.href=\'?action=logout\'">Logout</button></header>';
+    
+    if (!isset($Discord['user']['isJoin'])){
+        //check if is join
+        if (isset($Discord['server_id'])){
+            if (strlen($Discord['server_id'])>0){
+                $Discord['guild'] = apiRequest($guildURL);
+                if(isset($guild['retry_after'])||isset($Discord['user']['retry_after'])){
+                    die($reload);
+                }
 
-				if (isJoin($Discord['server_id'],$Discord['guild'])){
-					$Discord['state'] = 2;
-					$Discord['user']['isJoin'] = true;
-				}else{
-					$Discord['state'] = 3;
-					//$Discord['user']['isJoin'] = false;
-				}
-				addcookie(C_USER, Cyper::encrypt(json_encode($Discord['user'])), expire_time);
-			}
-		}
-	} else {
-		if ($Discord['user']['isJoin']){
-			$Discord['state'] = 2;
-		}else{
-			$Discord['state'] = 3;
-		}
-	}
-	//echo '<pre>'; die(print_r($Discord['user']));//use this to debug
-	if(ismain() && !get('error')){$bodyH .= delayurl("/",15).'How the hell did you get here???';}
+                if (isJoin($Discord['server_id'],$Discord['guild'])){
+                    $Discord['state'] = 2;
+                    $Discord['user']['isJoin'] = true;
+                }else{
+                    $Discord['state'] = 3;
+                    //$Discord['user']['isJoin'] = false;
+                }
+                addcookie(C_USER, Cyper::encrypt(json_encode($Discord['user'])), expire_time);
+            }
+        }
+    } else {
+        if ($Discord['user']['isJoin']){
+            $Discord['state'] = 2;
+        }else{
+            $Discord['state'] = 3;
+        }
+    }
+    //echo '<pre>'; die(print_r($Discord['user']));//use this to debug
+    if(ismain() && !get('error')){$bodyH .= delayurl("/",15).'How the hell did you get here???';}
 } else {
-	if (cookie(refresh_token)) GoLoc('?action=refresh');
-	$Discord['state'] = 0;
-	$avatar = 'https://cdn.discordapp.com/embed/avatars/0.png';
-	$headerH = '
-	<header class=header-login><span id=SideH></span><br>
-	<img class=rounded-circle src="'.$avatar.'"/>
-	<button class=butt-login onclick="window.location.href=\'?action=login\'">Login</button>
-	<h4 class=text-login >Not logged in</h4></header>';
+    if (cookie(refresh_token)) GoLoc('?action=refresh');
+    $Discord['state'] = 0;
+    $avatar = 'https://cdn.discordapp.com/embed/avatars/0.png';
+    $headerH = '
+    <header class=header-login><span id=SideH></span><br>
+    <img class=rounded-circle src="'.$avatar.'"/>
+    <button class=butt-login onclick="window.location.href=\'?action=login\'">Login</button>
+    <h4 class=text-login >Not logged in</h4></header>';
 }
 
 //set the default HTML Header
@@ -242,25 +242,25 @@ $headerH = '<style>
 </style>
 '.$headerH;
 if ($Discord['header'] != "NO"){
-	echo $headerH;
+    echo $headerH;
 }
 if (strlen($bodyH) > 0) echo $bodyH;
 
 //main functions
 function isJoin($G_ID,$G_Arr){
-	//return false;
-	try{
-		for ($i=0; $i<count($G_Arr); $i++)
-		{
-			if ($G_Arr[$i]['id'] == $G_ID){return true;}
-		}
-	}catch(Exception $ex)
-	{ // If critical functions fail, we catch the reason why
-		echo '<pre>';
-		print_r($G_Arr);
-		echo '</pre>';
-	}
-	return false;
+    //return false;
+    try{
+        for ($i=0; $i<count($G_Arr); $i++)
+        {
+            if ($G_Arr[$i]['id'] == $G_ID){return true;}
+        }
+    }catch(Exception $ex)
+    { // If critical functions fail, we catch the reason why
+        echo '<pre>';
+        print_r($G_Arr);
+        echo '</pre>';
+    }
+    return false;
 }
 function apiRequest($url, $post=FALSE, $headers=array()) {
   $ch = curl_init($url);
@@ -288,71 +288,71 @@ function session($key, $default=NULL) {
 }
 
 function delcookie($key) {
-	$config = array (
-		'expires' => time()-10,
-		'path' => '/',
-		'domain' => $_SERVER["HTTP_HOST"], // leading dot for compatibility or use subdomain
-		'secure' => false,     // or false
-		'httponly' => true,    // or false
-		'samesite' => 'Lax' // None || Lax  || Strict
-	);
-	setcookie($key, '', $config);   
+    $config = array (
+        'expires' => time()-10,
+        'path' => '/',
+        'domain' => $_SERVER["HTTP_HOST"], // leading dot for compatibility or use subdomain
+        'secure' => false,     // or false
+        'httponly' => true,    // or false
+        'samesite' => 'Lax' // None || Lax  || Strict
+    );
+    setcookie($key, '', $config);   
 }
 
 function addcookie($key, $val,$time) {
-	$config = array (
-		'expires' => time()+$time,
-		'path' => '/',
-		'domain' => $_SERVER["HTTP_HOST"], // leading dot for compatibility or use subdomain
-		'secure' => false,     // or false
-		'httponly' => true,    // or false
-		'samesite' => 'Lax' // None || Lax  || Strict
-	);
-	setcookie($key, $val, $config);   
+    $config = array (
+        'expires' => time()+$time,
+        'path' => '/',
+        'domain' => $_SERVER["HTTP_HOST"], // leading dot for compatibility or use subdomain
+        'secure' => false,     // or false
+        'httponly' => true,    // or false
+        'samesite' => 'Lax' // None || Lax  || Strict
+    );
+    setcookie($key, $val, $config);   
 }
 
 function cookie($key, $default=NULL) {
   return array_key_exists($key, $_COOKIE) ? $_COOKIE[$key] : $default;
 }
 function GoLoc($extra = ''){
-	
-	if (strlen($extra)>0){
-		die(header('Location: '.$_SERVER['PHP_SELF'].$extra));
-	} else {
-		die(header('Location: '.mainfile()));
-	}
+    
+    if (strlen($extra)>0){
+        die(header('Location: '.$_SERVER['PHP_SELF'].$extra));
+    } else {
+        die(header('Location: '.mainfile()));
+    }
 }
 function delayurl($url,$delay=0){
-	return '<!DOCTYPE html><meta http-equiv="refresh" content="'.$delay.'; url='.$url.'" />';
+    return '<!DOCTYPE html><meta http-equiv="refresh" content="'.$delay.'; url='.$url.'" />';
 
 }
 function redirect($url){
-	die(header('Location: '.$url));
+    die(header('Location: '.$url));
 }
 
 function N($data){
-	return substr(sha1($data),0,10);
+    return substr(sha1($data),0,10);
 }
 
 function realfile(){
-	$url = __FILE__;
-	$url = str_replace("\\","/",$url);
-	$root = $_SERVER['DOCUMENT_ROOT'];
-	$url = str_replace($root,"",$url);
-	return 'https://' . $_SERVER["HTTP_HOST"] .$url;
+    $url = __FILE__;
+    $url = str_replace("\\","/",$url);
+    $root = $_SERVER['DOCUMENT_ROOT'];
+    $url = str_replace($root,"",$url);
+    return 'https://' . $_SERVER["HTTP_HOST"] .$url;
 }
 function ismain(){
-	if(strpos('-'.mainfile(),realfile())){
-		return true;
-	}
+    if(strpos('-'.mainfile(),realfile())){
+        return true;
+    }
 return false;
 }
 function mainfile(){
-	$uri = $_SERVER["REQUEST_URI"];
-	if (get('action')){
-		$uri = str_replace("?".$_SERVER["QUERY_STRING"],"",$uri);
-	}
-	return 'https://' . $_SERVER["HTTP_HOST"] . $uri;
+    $uri = $_SERVER["REQUEST_URI"];
+    if (get('action')){
+        $uri = str_replace("?".$_SERVER["QUERY_STRING"],"",$uri);
+    }
+    return 'https://' . $_SERVER["HTTP_HOST"] . $uri;
 }
 function FormatAvatar(&$Discord){
     if (strlen($Discord['user']['avatar']) != 0){
@@ -368,7 +368,7 @@ class Cyper {
     const METHOD = 'aes-256-ctr';
     public static function encrypt($message, $key = P_KEY, $encode = true)
     {
-		$message = gzcompress($message,9);
+        $message = gzcompress($message,9);
         $nonceSize = openssl_cipher_iv_length(self::METHOD);
         $nonce = openssl_random_pseudo_bytes($nonceSize);
 
@@ -406,8 +406,8 @@ class Cyper {
             OPENSSL_RAW_DATA,
             $nonce
         );
-		
-		$plaintext = gzuncompress($plaintext);
+        
+        $plaintext = gzuncompress($plaintext);
         return $plaintext;
     }
 
